@@ -88,18 +88,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ngx-admin-demo:build"
+            "buildTarget": "ngx-admin-demo:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "ngx-admin-demo:build:production"
+              "buildTarget": "ngx-admin-demo:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ngx-admin-demo:build"
+            "buildTarget": "ngx-admin-demo:build"
           }
         },
         "test": {
@@ -165,6 +165,10 @@
     }
   },
   "cli": {
+<<<<<<< HEAD
     "analytics": "bcf6ca84-c3ce-4ecd-9f46-704740310e47"
+=======
+    "analytics": false
+>>>>>>> 68905451f52b7a54e6660da700ed06e32b182807
   }
 }
