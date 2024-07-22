@@ -163,5 +163,8 @@
     "@schematics/angular:directive": {
       "prefix": "ngx"
     }
+  },
+  "cli": {
+    "analytics": "bcf6ca84-c3ce-4ecd-9f46-704740310e47"
   }
 }
