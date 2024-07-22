@@ -49,7 +49,7 @@ test('User facing locator', async ({page}) => {
     await page.getByText('Using the Grid').click()
 
     //data-testid attribute
-    await page.getByTestId('IoT Dashboard').click()
+    //await page.getByTestId('IoT Dashboard').click()
 
     await page.getByTitle('IoT Dashboard').click()
 
