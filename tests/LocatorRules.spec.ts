@@ -1,4 +1,4 @@
-import { test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:4200/')
@@ -69,14 +69,63 @@ test('locating child elements', async ({page}) => {
 
 test('locating parent elements', async ({page}) => {
     //the second argument - уточнення що цей елемент має specific child
-    await  page.locator('nb-card', {hasText: "Using the Grid"}).getByRole('textbox', {name: "Email"}).click()
-    await  page.locator('nb-card', {has: page.locator('#inputEmail1')}).getByRole('textbox', {name: "Email"}).click()
+    await page.locator('nb-card', {hasText: "Using the Grid"}).getByRole('textbox', {name: "Email"}).click()
+    await page.locator('nb-card', {has: page.locator('#inputEmail1')}).getByRole('textbox', {name: "Email"}).click()
 
-    await  page.locator('nb-card').filter({hasText: "Basic form"}).getByRole('textbox', {name: "Email"}).click()
-    await  page.locator('nb-card').filter({has: page.locator('.status-danger')}).getByRole('textbox', {name: "Email"}).click()
+    await page.locator('nb-card').filter({hasText: "Basic form"}).getByRole('textbox', {name: "Email"}).click()
+    await page.locator('nb-card').filter({has: page.locator('.status-danger')}).getByRole('textbox', {name: "Email"}).click()
 
-    await  page.locator('nb-card').filter({has: page.locator('nb-checkbox')}).filter({hasText: "Sign in"}).getByRole('textbox', {name: "Email"}).click()
+    await page.locator('nb-card').filter({has: page.locator('nb-checkbox')}).filter({hasText: "Sign in"}).getByRole('textbox', {name: "Email"}).click()
     
     //locator('..') - one level up
-    await  page.locator(':text-is("Using the Grid")').locator('..').getByRole('textbox', {name: "Email"}).click()
+    await page.locator(':text-is("Using the Grid")').locator('..').getByRole('textbox', {name: "Email"}).click()
+})
+
+test('Reusing the locators', async({page})=>{
+    const basicForm = page.locator('nb-card').filter({hasText: "Basic form"})
+    const emailField = basicForm.getByRole('textbox', {name: "Email"})
+
+    await emailField.fill('test@test.com')
+    await basicForm.getByRole('textbox', {name: "Password"}).fill('Welcome123')
+    await basicForm.locator('nb-checkbox').click()
+    await basicForm.getByRole('button').click()
+
+    await expect(emailField).toHaveValue('test@test.com')
+})
+
+test('extacting values', async ({page}) => {
+    const basicForm = page.locator('nb-card').filter({hasText: "Basic form"})
+    const buttonText = await basicForm.locator('button').textContent()
+    expect(buttonText).toEqual('Submit')
+
+    //all text values
+    const allRadioButtonsLabel = await page.locator('nb-radio').allTextContents()
+    expect(allRadioButtonsLabel).toContain('Option 1')
+
+    //input value
+    const emailField = basicForm.getByRole('textbox', {name: "Email"})
+    await emailField.fill('test@test.com')
+    const emailValue = await emailField.inputValue()
+    expect(emailValue).toEqual('test@test.com')
+
+    //attribute value
+    const placeholderValue = await emailField.getAttribute('placeholder')
+    expect(placeholderValue).toEqual('Email')
+})
+
+test('assertions', async ({page}) => {
+    //General asserrtion
+    const value = 5
+    expect(value).toEqual(5)
+
+    const basicFormButton = page.locator('nb-card').filter({hasText: "Basic form"}).locator('button')
+    const text = await basicFormButton.textContent()
+    expect(test).toEqual("Submit")
+
+    //Locator assertion (wait 5 sec)
+    await expect(basicFormButton).toHaveText('Submit')
+
+    //Soft assertion (skip fails and go to the next step) not a good practice
+    await expect.soft(basicFormButton).toHaveText('Submit')
+    await basicFormButton.click()
 })
