@@ -1,7 +1,7 @@
 import {test, expect} from '@playwright/test'
 
 test.beforeEach(async ({page}, testInfo) => {
-    await page.goto('http://www.uitestingplayground.com/ajax')
+    await page.goto(process.env.URL)
     await page.getByText('Button Triggering AJAX Request').click()
     //збільшуємо таймаут для сьюта на 2 сек
     testInfo.setTimeout(testInfo.timeout + 2000) 
